@@ -1,9 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, resource, signal } from '@angular/core';
 import { SearchInputComponent } from "../../components/search-input/search-input.component";
 import { CountryListComponent } from "../../components/country-list/country-list.component";
 import { CountryService } from '../../services/Country.service';
-import { RESTCountry } from '../../interfaces/rest-countries.interfaces';
-import { Country } from '../../interfaces/country.interfaces';
+import { rxResource } from "@angular/core/rxjs-interop";
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-by-capital-page',
@@ -14,23 +14,50 @@ export default class ByCapitalPageComponent {
 
   countryServices : CountryService = inject(CountryService)
 
-  isLoading = signal(false);
-  isError = signal<string|null>(null);
-  countries = signal<Country[]>([]);
+  query = signal('')
 
-  onSearch(value : string){
+  countryResourse = rxResource({
+    request: () => ({query: this.query()}),
+    loader: ({request}) =>{
+      if(!request.query) return of([]);
+      return this.countryServices.searchByCapital(request.query)
+    }
+  })
 
-    if(this.isLoading()) return;
-    this.isLoading.set(true);
-    this.isError.set(null)
+  // countryResourse = resource({
+  //   request: () => ({query: this.query()}),
+  //   loader: async({request}) => {
+  //     if(!request.query) return [];
 
-    this.countryServices.searchByCapital(value)
-    .subscribe( resp => {
+  //     return await firstValueFrom(
+  //       this.countryServices.searchByCapital(request.query)
+  //     )
+  //   }
+  // })
 
-      this.isLoading.set(false);
-      this.countries.set(resp)
 
-      console.log(resp)
-    })
-  }
+
+  // isLoading = signal(false);
+  // isError = signal<string|null>(null);
+  // countries = signal<Country[]>([]);
+
+  // onSearch(value : string){
+
+  //   if(this.isLoading()) return;
+  //   this.isLoading.set(true);
+  //   this.isError.set(null)
+
+  //   this.countryServices.searchByCapital(value)
+  //   .subscribe({
+  //     next: (value) =>  {
+  //       this.isLoading.set(true)
+  //       this.countries.set(value)
+  //     },
+  //     error: (err) => {
+  //       this.isLoading.set(false)
+  //       this.countries.set([])
+  //       this.isError.set(err)
+  //     },
+  //   })
+  // }
 }
