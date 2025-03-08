@@ -8,7 +8,9 @@ export class CountryMapper{
       flag: restCountry.flag,
       flagSvg: restCountry.flags.svg,
       capital: restCountry.capital.join(','),
-      population: restCountry.population
+      population: restCountry.population,
+      region : restCountry.region,
+      subRegion: restCountry.subregion
     }
   }
 

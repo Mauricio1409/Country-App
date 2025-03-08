@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { RESTCountry } from '../interfaces/rest-countries.interfaces';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, delay, map, Observable, throwError } from 'rxjs';
 import { Country } from '../interfaces/country.interfaces';
 import { CountryMapper } from '../mapper/country.mapper';
 
@@ -38,6 +38,21 @@ export class CountryService {
 
         return throwError(() => new Error(`No se encontro un pais con nombre ${query}`))
       })
+    )
+  }
+
+  searchCountryByCode(code: string) : Observable<Country | undefined>{
+    const url = `${API_URL}/alpha/${code}`;
+
+
+    return this.http.get<RESTCountry[]>(url).pipe(
+      map(restCounrty => CountryMapper.MapRestCountryArrayToCountryArray(restCounrty)),
+      map(countries => countries.at(0)),
+      catchError((err) => {
+        console.log('Error fetching: ', err)
+        return throwError(() => new Error('No se encontro un pais con el codigo'))
+      })
+
     )
   }
 
