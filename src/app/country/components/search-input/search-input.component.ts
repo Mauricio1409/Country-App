@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, linkedSignal, output, signal } from '@angular/core';
 
 @Component({
   selector: 'app-search-input',
@@ -10,7 +10,11 @@ export class SearchInputComponent {
   placeholder = input('buscar');
   value = output<string>();
 
-  inputValue = signal<string>('')
+  initialValue = input<string>('')
+
+  inputValue = linkedSignal<string>(() => this.initialValue())
+
+
 
   debounceEffect = effect((onCleanup) => {
     const value = this.inputValue();

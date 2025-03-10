@@ -1,4 +1,5 @@
 <app-search-input placeholder="Buscar Por Capital"
+[initialValue]="query()"
 (value)="query.set($event)"
 />
 

@@ -1,4 +1,5 @@
 <app-search-input placeholder="Buscar Por Pais"
+[initialValue]="query()"
 (value)="query.set($event)"
 />
 <app-country-list [countries]="countryResourse.value() ?? []"
